@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Ринат Зарипов](https://up.htmlacademy.ru/javascript/28/user/2325181).
-* Наставник: `Руслан Гусейнов`[https://htmlacademy.ru/profile/id1330673].
+* Наставник: [Руслан Гусейнов](https://htmlacademy.ru/profile/id1330673).
 
 ---
 
