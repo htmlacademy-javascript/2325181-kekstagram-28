@@ -22,6 +22,8 @@ function concatString(initialString, minimalLength, addSymbols) {
   if (minimalLength > initialString.length) {
     const timesAddSymbols = addSymbols.repeat((minimalLength - initialString.length) / addSymbols.length);
     const shortAddSymbols = addSymbols.substr(0, (minimalLength - initialString.length) % addSymbols.length);
-    return timesAddSymbols.concat(shortAddSymbols, initialString);
+    return shortAddSymbols.concat(timesAddSymbols, initialString);
   } return initialString;
 }
+
+export {isStringLength, isPalindrom, extractNumbers, concatString};
