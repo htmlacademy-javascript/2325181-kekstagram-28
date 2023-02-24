@@ -110,6 +110,6 @@ const getNewDescription = () => ({
 
 
 // Генерация списка описаний
-const descriptionList = () => Array.from({length: DESCRIPTIONS_QUANTITY}, getNewDescription);
+const getDescriptionList = () => Array.from({length: DESCRIPTIONS_QUANTITY}, getNewDescription);
 
-descriptionList();
+getDescriptionList();
