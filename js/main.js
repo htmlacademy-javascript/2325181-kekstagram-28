@@ -1,6 +1,7 @@
+// Параметры количества фото, комментариев и описаний
 const DESCRIPTIONS_QUANTITY = 25;
 const PHOTOS_QUANTITY = 25;
-const COMMENTS_QUANTITY = 8;
+const COMMENTS_QUANTITY_MAX = 8;
 
 
 //Сообщения в комменатриях
@@ -40,7 +41,20 @@ const PHOTO_DESCRIPTIONS = [
   'красивое фото на стене, на котором я вижу свое отражение.',
   'красивое фото на стене не может быть настоящим.',
   'а это мы с женой на выходных. Она пошла в душ, а я остался дома с ребенком.',
-  'а это мы с ним во всю ночь играли в игру "найди отличия"'
+  'а это мы с ним во всю ночь играли в игру "найди отличия"',
+  'а это мы, когда ещё не были женаты. Она была совсем крошкой.',
+  'а это мы с дочкой перед походом к стоматологу.',
+  'а это мы с сестрой перед зеркалом ночью.',
+  'а это мы с женой в день свадьбы.',
+  'а это мы в детстве.',
+  'а это мы были в отпуске.',
+  'а это мы с мужем во время нашего медового месяца.',
+  'а это мы с друзьями были на выпускном.',
+  'а это мы с моим котом по очереди спим на кровати',
+  'а это мы с женой и дочкой спим в одной кровати.',
+  'а это мы с женой спим с закрытыми глазами.',
+  'а это мы с моим сыном. Он уснул и во сне стал смеяться.',
+  'а это мы с папой смотрим на нашу дочку. Она в своей кроватке, а папа на стуле.'
 ];
 
 // Генератор случайных чисел
@@ -65,7 +79,7 @@ const getRandomId = (min, max) => {
 };
 
 // Генераторы уникальных номеров для комментариев, описаний и фото
-const getCommentId = getRandomId(1, COMMENTS_QUANTITY);
+const getCommentId = getRandomId(0, COMMENTS_QUANTITY_MAX * DESCRIPTIONS_QUANTITY);
 const getDescriptionId = getRandomId(1, DESCRIPTIONS_QUANTITY);
 const getPhotoId = getRandomId(1, PHOTOS_QUANTITY);
 
@@ -83,7 +97,7 @@ const getNewComment = () => ({
 
 
 // Генерация списка комментариев
-const commentList = Array.from({length: COMMENTS_QUANTITY}, getNewComment);
+const getCommentList = () => Array.from({length: getRandomNumber(1, COMMENTS_QUANTITY_MAX)}, getNewComment);
 
 // Создание нового описания фотографии
 const getNewDescription = () => ({
@@ -91,11 +105,11 @@ const getNewDescription = () => ({
   url: `photos/${getPhotoId()}.jpg`,
   description: getRandomArrayElement(PHOTO_DESCRIPTIONS),
   likes: getRandomNumber(15, 200),
-  comments: commentList
+  comments: getCommentList()
 });
 
 
 // Генерация списка описаний
-const descriptionList = Array.from({length: DESCRIPTIONS_QUANTITY}, getNewDescription);
+const descriptionList = () => Array.from({length: DESCRIPTIONS_QUANTITY}, getNewDescription);
 
-console.log(descriptionList);
+descriptionList();
