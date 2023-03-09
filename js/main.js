@@ -1,3 +1,1 @@
-import { getDescriptionList } from './data.js';
-
-getDescriptionList();
+import './render.js';
