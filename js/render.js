@@ -1,6 +1,6 @@
 import {getDescriptionList} from './data.js';
 
-const renderPictures = function() {
+const renderPictures = () => {
   // Получаем шаблон фотографии
   const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
