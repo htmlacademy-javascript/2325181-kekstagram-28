@@ -81,7 +81,7 @@ const showBigPicture = () => {
     getScroll();
     document.querySelector('body').classList.remove('modal-open');
     bigPictureLikes.removeEventListener('click', onLikesClick);
-    bigPicture.addEventListener('click', onPreviewOutsideClick);
+    bigPicture.removeEventListener('click', onPreviewOutsideClick);
   };
 
   // Вызов функции закрытия по клику за пределами полноразмерного фото
@@ -117,9 +117,9 @@ const showBigPicture = () => {
       //
       document.querySelector('body').classList.add('modal-open');
       getScroll();
-      bigPicture.addEventListener('click', onPreviewOutsideClick);
       document.addEventListener('keydown', onDocumentEscape, {once: true});
       bigPictureReset.addEventListener('click', bigPictureClose, {once: true});
+      bigPicture.addEventListener('click', onPreviewOutsideClick);
       bigPictureLikes.addEventListener('click', onLikesClick);
       bigPicture.classList.remove('hidden');
     }
