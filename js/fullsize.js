@@ -29,13 +29,8 @@ const showBigPicture = () => {
   // Функция нахождения массива комментариев в сгенерированных описаниях, создания на их основе списка комментариев к полноразмерному фото
   const createSocialComments = (idNum) => {
     const commentsFragment = document.createDocumentFragment();
-    const socComments = [];
-    for(let i = 0; i < descriptionList.length; i++) {
-      if (descriptionList[i].id === Number(idNum)) {
-        socComments.push(...descriptionList[i].comments);
-      }
-    }
-    socComments.forEach(({id, avatar, message, name}) => {
+    const socialComments = descriptionList.find((element) => element.id === Number(idNum)).comments;
+    socialComments.forEach(({id, avatar, message, name}) => {
       const commentElement = bigPictureCommentTemplate.cloneNode(true);
       commentElement.setAttribute('id', id);
       commentElement.querySelector('.social__picture').src = avatar;
