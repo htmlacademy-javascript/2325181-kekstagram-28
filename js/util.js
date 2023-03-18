@@ -22,4 +22,23 @@ const getRandomId = (min, max) => {
 // Генератор случайного индекса массива
 const getRandomArrayElement = (arrayInput) => arrayInput[getRandomNumber(0, arrayInput.length - 1)];
 
-export { getRandomNumber, getRandomId, getRandomArrayElement };
+// Функция определения нажатия Esc
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+// Функция сохранения/получения позиции скролла экрана в момент открытия закрытия полноразмерного фото
+const rememberScroll = () => {
+  let currentScroll = 0;
+  return () => {
+    if (window.scrollY || currentScroll) {
+      if (currentScroll === 0) {
+        currentScroll = window.scrollY;
+      } else {
+        window.scroll(0, currentScroll);
+        currentScroll = 0;
+      }
+    }
+  };
+};
+
+
+export { getRandomNumber, getRandomId, getRandomArrayElement, isEscapeKey, rememberScroll };
