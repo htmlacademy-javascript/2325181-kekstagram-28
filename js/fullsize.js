@@ -1,8 +1,6 @@
 import {isEscapeKey, rememberScroll} from './util.js';
-import {getDescriptionList} from './data.js';
-import {renderPictures} from './render.js';
 
-const showBigPicture = () => {
+const showBigPicture = (descriptionList) => {
   // Элементы полноэкранного изображения, открываемой миниатюры и количества лайков
   const bigPicture = document.querySelector('.big-picture');
   const bigPicturePreview = bigPicture.querySelector('.big-picture__preview');
@@ -19,20 +17,13 @@ const showBigPicture = () => {
   let targetNode;
   let likesCount;
 
-  // Генерируем список изображений из data.js
-  const descriptionList = getDescriptionList();
-
-  // Отрисовываем миниатюры картинок на странице по списку
-  renderPictures(descriptionList);
-
-
   // Функция нахождения массива комментариев в сгенерированных описаниях, создания на их основе списка комментариев к полноразмерному фото
   const createSocialComments = (idNum) => {
     const commentsFragment = document.createDocumentFragment();
     const socialComments = descriptionList.find((element) => element.id === Number(idNum)).comments;
     socialComments.forEach(({id, avatar, message, name}) => {
       const commentElement = bigPictureCommentTemplate.cloneNode(true);
-      commentElement.setAttribute('id', id);
+      commentElement.dataset.commentId = id;
       commentElement.querySelector('.social__picture').src = avatar;
       commentElement.querySelector('.social__picture').alt = name;
       commentElement.querySelector('.social__text').textContent = message;
@@ -41,7 +32,7 @@ const showBigPicture = () => {
     bigPictureCommentsList.appendChild(commentsFragment);
     for (let i = 0; i < bigPictureCommentsList.children.length; i++) {
       const comment = bigPictureCommentsList.children[i];
-      if (!comment.hasAttribute('id')) {
+      if (!comment.hasAttribute('data-comment-id')) {
         bigPictureCommentsList.removeChild(comment);
         i--;
       }
@@ -98,14 +89,14 @@ const showBigPicture = () => {
   const bigPictureOpen = (evt) => {
     if (evt.target.matches('.picture__img')) {
       targetNode = evt.target;
-      bigPicture.setAttribute('id', targetNode.closest('.picture').id);
+      bigPicture.dataset.bigPictureId = targetNode.closest('.picture').dataset.thumbnailId;
       bigPictureImg.src = targetNode.src;
       bigPictureCaption.textContent = targetNode.alt;
       likesCount = Number(targetNode.closest('.picture').querySelector('.picture__likes').textContent);
       bigPictureLikes.textContent = likesCount;
       bigPictureComments.textContent = targetNode.closest('.picture')
         .querySelector('.picture__comments').textContent;
-      createSocialComments(targetNode.closest('.picture').id);
+      createSocialComments(targetNode.closest('.picture').dataset.thumbnailId);
       // скрыты до выполнения второй части задания
       bigPictureSocialComments.classList.add('hidden');
       bigPictureCommentsLoader.classList.add('hidden');
