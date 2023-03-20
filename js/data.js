@@ -3,7 +3,7 @@ import {getRandomNumber, getRandomId, getRandomArrayElement} from './util.js';
 // Параметры количества фото, комментариев и описаний
 const DESCRIPTIONS_QUANTITY = 25;
 const PHOTOS_QUANTITY = 25;
-const COMMENTS_QUANTITY_MAX = 8;
+const COMMENTS_QUANTITY_MAX = 30;
 
 //Сообщения в комменатриях
 const MESSAGES = [
