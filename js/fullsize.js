@@ -1,30 +1,25 @@
 import {isEscapeKey, rememberScroll} from './util.js';
-import {getDescriptionList} from './data.js';
-import {renderPictures} from './render.js';
 
-const showBigPicture = () => {
-  // Элементы полноэкранного изображения, открываемой миниатюры и количества лайков
+// Количество загружаемых комментариев в полноразмерном изображении
+const COMMENTS_NEW_UPLOAD = 5;
+
+const showBigPicture = (descriptionList) => {
+
+  // Элементы полноэкранного изображения, открываемой миниатюры, переменные количества лайков, комментариев и элемента события
   const bigPicture = document.querySelector('.big-picture');
   const bigPicturePreview = bigPicture.querySelector('.big-picture__preview');
   const bigPictureImg = bigPicturePreview.querySelector('.big-picture__img')
     .querySelector('img');
   const bigPictureCaption = bigPicturePreview.querySelector('.social__caption');
   const bigPictureLikes = bigPicturePreview.querySelector('.likes-count');
-  const bigPictureComments = bigPicturePreview.querySelector('.comments-count');
   const bigPictureReset = bigPicturePreview.querySelector('.big-picture__cancel');
   const bigPictureSocialComments = bigPicturePreview.querySelector('.social__comment-count');
   const bigPictureCommentsLoader = bigPicturePreview.querySelector('.comments-loader');
   const bigPictureCommentTemplate = bigPicturePreview.querySelector('.social__comment');
   const bigPictureCommentsList = bigPicturePreview.querySelector('.social__comments');
+  let bigPictureComments;
   let targetNode;
   let likesCount;
-
-  // Генерируем список изображений из data.js
-  const descriptionList = getDescriptionList();
-
-  // Отрисовываем миниатюры картинок на странице по списку
-  renderPictures(descriptionList);
-
 
   // Функция нахождения массива комментариев в сгенерированных описаниях, создания на их основе списка комментариев к полноразмерному фото
   const createSocialComments = (idNum) => {
@@ -32,20 +27,47 @@ const showBigPicture = () => {
     const socialComments = descriptionList.find((element) => element.id === Number(idNum)).comments;
     socialComments.forEach(({id, avatar, message, name}) => {
       const commentElement = bigPictureCommentTemplate.cloneNode(true);
-      commentElement.setAttribute('id', id);
+      commentElement.dataset.commentId = id;
       commentElement.querySelector('.social__picture').src = avatar;
       commentElement.querySelector('.social__picture').alt = name;
       commentElement.querySelector('.social__text').textContent = message;
+      commentElement.classList.add('hidden');
       commentsFragment.appendChild(commentElement);
     });
     bigPictureCommentsList.appendChild(commentsFragment);
     for (let i = 0; i < bigPictureCommentsList.children.length; i++) {
       const comment = bigPictureCommentsList.children[i];
-      if (!comment.hasAttribute('id')) {
+      if (!comment.hasAttribute('data-comment-id')) {
         bigPictureCommentsList.removeChild(comment);
         i--;
       }
+      if (i < COMMENTS_NEW_UPLOAD) {
+        comment.classList.remove('hidden');
+      }
     }
+  };
+
+  // Функция отображения количества комментариев в полноэкранном изображении
+  const setCommentsCount = (shown) => {
+    bigPictureSocialComments.innerHTML = `${shown} из  <span class="comments-count">${bigPictureComments}</span> комментариев`;
+  };
+
+  // Функция добавления комментариев
+  const addMoreComments = () => {
+    let commentLoaded = 0;
+    let commentShown;
+    for (let i = COMMENTS_NEW_UPLOAD; i < bigPictureCommentsList.children.length; i++) {
+      if (bigPictureCommentsList.children[i].classList.contains('hidden') && commentLoaded < COMMENTS_NEW_UPLOAD) {
+        bigPictureCommentsList.children[i].classList.remove('hidden');
+        commentLoaded++;
+        commentShown = i + 1;
+      }
+      if (!bigPictureCommentsList.lastElementChild.classList.contains('hidden')) {
+        bigPictureCommentsLoader.classList.add('hidden');
+      }
+      setCommentsCount(commentShown);
+    }
+
   };
 
   // Переменная вызова функции скролла
@@ -72,11 +94,12 @@ const showBigPicture = () => {
       bigPictureCommentsList.removeChild(comment);
       i--;
     }
-    bigPicture.classList.add('hidden');
-    getScroll();
     document.querySelector('body').classList.remove('modal-open');
     bigPictureLikes.removeEventListener('click', onLikesClick);
-    bigPicture.removeEventListener('click', onPreviewOutsideClick);
+    bigPicture.removeEventListener('click', onPreviewOutsideClick, true);
+    bigPictureCommentsLoader.removeEventListener('click', addMoreComments);
+    bigPicture.classList.add('hidden');
+    getScroll();
   };
 
   // Вызов функции закрытия по клику за пределами полноразмерного фото
@@ -98,25 +121,28 @@ const showBigPicture = () => {
   const bigPictureOpen = (evt) => {
     if (evt.target.matches('.picture__img')) {
       targetNode = evt.target;
-      bigPicture.setAttribute('id', targetNode.closest('.picture').id);
+      bigPicture.dataset.bigPictureId = targetNode.closest('.picture').dataset.thumbnailId;
       bigPictureImg.src = targetNode.src;
       bigPictureCaption.textContent = targetNode.alt;
       likesCount = Number(targetNode.closest('.picture').querySelector('.picture__likes').textContent);
       bigPictureLikes.textContent = likesCount;
-      bigPictureComments.textContent = targetNode.closest('.picture')
-        .querySelector('.picture__comments').textContent;
-      createSocialComments(targetNode.closest('.picture').id);
-      // скрыты до выполнения второй части задания
-      bigPictureSocialComments.classList.add('hidden');
-      bigPictureCommentsLoader.classList.add('hidden');
-      //
+      bigPictureComments = targetNode.closest('.picture').querySelector('.picture__comments').textContent;
+      setCommentsCount(Math.min(bigPictureComments, COMMENTS_NEW_UPLOAD));
+      createSocialComments(targetNode.closest('.picture').dataset.thumbnailId);
+      if (bigPictureCommentsList.lastElementChild.classList.contains('hidden')) {
+        bigPictureCommentsLoader.classList.remove('hidden');
+      } else {
+        bigPictureCommentsLoader.classList.add('hidden');
+      }
       document.querySelector('body').classList.add('modal-open');
       getScroll();
+      bigPicture.classList.remove('hidden');
       document.addEventListener('keydown', onDocumentEscape, {once: true});
       bigPictureReset.addEventListener('click', bigPictureClose, {once: true});
-      bigPicture.addEventListener('click', onPreviewOutsideClick);
+      bigPicture.addEventListener('click', onPreviewOutsideClick, true);
       bigPictureLikes.addEventListener('click', onLikesClick);
-      bigPicture.classList.remove('hidden');
+      bigPictureCommentsLoader.addEventListener('click', addMoreComments);
+
     }
   };
 

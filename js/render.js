@@ -11,7 +11,7 @@ const renderPictures = (descriptionList) => {
   // Заполняем данные из списка изображений в элементы фотографий и добавляем элементы во фрагмент
   descriptionList.forEach(({id, url, likes, comments, description}) => {
     const pictureElement = pictureTemplate.cloneNode(true);
-    pictureElement.setAttribute('id', id);
+    pictureElement.dataset.thumbnailId = id;
     pictureElement.querySelector('.picture__img').src = url;
     pictureElement.querySelector('.picture__likes').textContent = likes;
     pictureElement.querySelector('.picture__comments').textContent = comments.length;
