@@ -1,4 +1,4 @@
-import {isEscapeKey, rememberScroll} from './util.js';
+import {rememberScroll, onDocumentEscape} from './util.js';
 
 // Количество загружаемых комментариев в полноразмерном изображении
 const COMMENTS_NEW_UPLOAD = 5;
@@ -110,12 +110,7 @@ const showBigPicture = (descriptionList) => {
   }
 
   // Вызов функции закрытия по нажатию Esc
-  const onDocumentEscape = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      bigPictureClose();
-    }
-  };
+  const escapeModal = (evt) => onDocumentEscape(evt, bigPictureClose);
 
   // Функция открытия полноразмерного фото
   const bigPictureOpen = (evt) => {
@@ -134,10 +129,10 @@ const showBigPicture = (descriptionList) => {
       } else {
         bigPictureCommentsLoader.classList.add('hidden');
       }
-      document.querySelector('body').classList.add('modal-open');
+      document.body.classList.add('modal-open');
       getScroll();
       bigPicture.classList.remove('hidden');
-      document.addEventListener('keydown', onDocumentEscape, {once: true});
+      document.addEventListener('keydown', escapeModal, {once: true});
       bigPictureReset.addEventListener('click', bigPictureClose, {once: true});
       bigPicture.addEventListener('click', onPreviewOutsideClick, true);
       bigPictureLikes.addEventListener('click', onLikesClick);
