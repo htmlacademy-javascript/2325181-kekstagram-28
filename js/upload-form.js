@@ -1,3 +1,5 @@
+import {createSlider, removeSlider} from './effect.js';
+import {resetScale, addManageScale} from './scale.js';
 import {onDocumentEscape} from './util.js';
 
 const uploadPhoto = () => {
@@ -22,12 +24,22 @@ const uploadPhoto = () => {
     textDescription.value = '';
   };
 
-  // Функция закрытия формы редактирования изображения
-  const closeOverlay = () => {
+  // Конструктор Pristine
+  const pristine = new Pristine(uploadForm, {
+    classTo: 'img-upload__field-wrapper',
+    errorTextParent: 'img-upload__field-wrapper',
+    errorTextClass: 'img-upload__field-wrapper__error',
+  }, true);
+
+  // Обработчик закрытия формы редактирования изображения по нажатию кнопки Х
+  const onUploadCancelClick = () => {
+    resetScale();
     resetFormFields();
+    removeSlider();
+    pristine.reset();
     uploadOverlay.classList.add('hidden');
     document.body.classList.remove('modal-open');
-    document.removeEventListener('keydown', escapeOverlay);
+    document.removeEventListener('keydown', onOverlayEscape);
     uploadForm.removeEventListener('submit', submitForm);
   };
 
@@ -36,10 +48,10 @@ const uploadPhoto = () => {
     document.activeElement === textHashtags ||
     document.activeElement === textDescription;
 
-  // Функция выхода из формы редактирования по нажатию Escape
-  function escapeOverlay(evt) {
+  // Обработчик выхода из формы редактирования по нажатию Escape
+  function onOverlayEscape(evt) {
     if (!isTextFieldFocused()) {
-      onDocumentEscape(evt, closeOverlay);
+      onDocumentEscape(evt, onUploadCancelClick);
     }
   }
 
@@ -58,7 +70,7 @@ const uploadPhoto = () => {
     document.body.appendChild(successMessage);
     const closeSuccessMessage = () => closeMessage(successMessage);
     document.addEventListener('keydown', (evt) => onDocumentEscape(evt, closeSuccessMessage), {once: true});
-    successButton.addEventListener('click', () => closeMessage(successMessage), {once: true});
+    successButton.addEventListener('click', closeSuccessMessage, {once: true});
   };
 
   // Функция отображения сообщения об ошибке
@@ -72,11 +84,11 @@ const uploadPhoto = () => {
     errorButton.textContent = 'Понятно';
     document.body.appendChild(errorMessage);
     const closeErrorMessage = () => closeMessage(errorMessage);
-    document.removeEventListener('keydown', escapeOverlay);
+    document.removeEventListener('keydown', onOverlayEscape);
     errorButton.addEventListener('click', closeErrorMessage, {once: true});
     document.addEventListener('keydown', (evt) => {
       onDocumentEscape(evt, closeErrorMessage);
-      document.addEventListener('keydown', escapeOverlay, {once: true});
+      document.addEventListener('keydown', onOverlayEscape, {once: true});
     }, {once: true});
   };
 
@@ -105,29 +117,23 @@ const uploadPhoto = () => {
   // Функция проверки длины поля комментария
   const checkDescriptionLength = (value) => value.length <= 140;
 
-  // Конструктор Pristine
-  const pristine = new Pristine(uploadForm, {
-    classTo: 'img-upload__field-wrapper',
-    errorTextParent: 'img-upload__field-wrapper',
-    errorTextClass: 'img-upload__field-wrapper__error',
-  }, true);
-
   // Валидаторы Pristine по количеству, формату, длине, уникальности хэштегов
   pristine.addValidator(textHashtags, uniqueHashTags, 'Один и тот же хэш-тег не может быть использован дважды');
   pristine.addValidator(textHashtags, everyHashTagValid, 'Максимальная длина одного хэш-тега 20 символов, включая решётку. Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.');
   pristine.addValidator(textHashtags, hasValidCount, 'нельзя указать больше пяти хэш-тегов');
   pristine.addValidator(textDescription, checkDescriptionLength, 'Длина комментария не может составлять более 140 символов.');
 
-  // Функция открытия формы редактирования изображения
-  const openOverlay = () => {
+  // Обработчик выбора файла для загрузки
+  const onUploadFileSelect = () => {
     uploadOverlay.classList.remove('hidden');
     document.body.classList.add('modal-open');
     uploadPreview.src = URL.createObjectURL(uploadFile.files[0]);
-    uploadPreview.alt = textDescription.textContent;
-    document.addEventListener('keydown', escapeOverlay);
-    uploadCancel.addEventListener('click', closeOverlay, {once: true});
-    pristine.validate();
+    uploadPreview.alt = 'Моя фотография';
+    document.addEventListener('keydown', onOverlayEscape);
+    uploadCancel.addEventListener('click', onUploadCancelClick, {once: true});
     uploadForm.addEventListener('submit', submitForm);
+    addManageScale();
+    createSlider();
   };
 
   // Функция отправки формы на сервер (на данный момент только валидация)
@@ -136,16 +142,17 @@ const uploadPhoto = () => {
     pristine.validate();
     const isValid = pristine.validate();
     if (isValid) {
+      uploadForm.submit();
       showSuccessMessage();
       resetFormFields();
-      closeOverlay();
+      onUploadCancelClick();
     } else {
       showErrorMessage();
     }
   }
 
   // Обработчик открытия формы редактирования изображения по выбору файла для загрузки
-  uploadFile.addEventListener('change', openOverlay);
+  uploadFile.addEventListener('change', onUploadFileSelect);
 
 };
 
