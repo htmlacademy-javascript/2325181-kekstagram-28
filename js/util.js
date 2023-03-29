@@ -25,6 +25,14 @@ const getRandomArrayElement = (arrayInput) => arrayInput[getRandomNumber(0, arra
 // Функция определения нажатия Esc
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
+// Функция закрытия по нажатию Esc
+const onDocumentEscape = (evt, closingFunction) => {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    closingFunction();
+  }
+};
+
 // Функция сохранения/получения позиции скролла экрана в момент открытия закрытия полноразмерного фото
 const rememberScroll = () => {
   let currentScroll = 0;
@@ -41,4 +49,4 @@ const rememberScroll = () => {
 };
 
 
-export { getRandomNumber, getRandomId, getRandomArrayElement, isEscapeKey, rememberScroll };
+export { getRandomNumber, getRandomId, getRandomArrayElement, isEscapeKey, rememberScroll, onDocumentEscape };
