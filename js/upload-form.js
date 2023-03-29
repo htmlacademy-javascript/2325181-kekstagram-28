@@ -2,6 +2,27 @@ import {createSlider, removeSlider} from './effect.js';
 import {resetScale, addManageScale} from './scale.js';
 import {onDocumentEscape} from './util.js';
 
+
+const SUCCESS_MESSAGE_PARAMETERS = [
+  '#success',
+  '.success',
+  '.success__title',
+  'Ваше фото добавлено в галерею',
+  '.success__button',
+  'Отлично',
+  '.success__inner'
+];
+
+const ERROR_MESSAGE_PARAMETERS = [
+  '#error',
+  '.error',
+  '.error__title',
+  'Произошли ошибки во время загузки',
+  '.error__button',
+  'Понятно',
+  '.error__inner'
+];
+
 const uploadPhoto = () => {
 
   // Элементы формы загрузки изображения, константы регулярных выражений и количества для проверки хэштегов
@@ -31,8 +52,8 @@ const uploadPhoto = () => {
     errorTextClass: 'img-upload__field-wrapper__error',
   }, true);
 
-  // Обработчик закрытия формы редактирования изображения по нажатию кнопки Х
-  const onUploadCancelClick = () => {
+  // Функция закрытия формы редактирования изображения
+  const closeUploadOverlay = () => {
     resetScale();
     resetFormFields();
     removeSlider();
@@ -42,6 +63,9 @@ const uploadPhoto = () => {
     document.removeEventListener('keydown', onOverlayEscape);
     uploadForm.removeEventListener('submit', submitForm);
   };
+
+  // Обработчик закрытия формы редактирования изображения по нажатию кнопки Х
+  const onUploadCancelClick = () => closeUploadOverlay();
 
   // Функция проверки фокуса на текстовой части формы редактирования
   const isTextFieldFocused = () =>
@@ -55,40 +79,39 @@ const uploadPhoto = () => {
     }
   }
 
-  // Функция закрытия сообщения
-  const closeMessage = (messageBox) => messageBox.classList.add('hidden');
-
-  // Функция отображения сообщения об успешной загрузке фотографии
-  const showSuccessMessage = () => {
-    const successMessageTemplate = document.querySelector('#success')
-      .content.querySelector('.success');
-    const successMessage = successMessageTemplate.cloneNode(true);
-    const successTitle = successMessage.querySelector('.success__title');
-    successTitle.textContent = 'Ваше фото добавлено в галерею';
-    const successButton = successMessage.querySelector('.success__button');
-    successButton.textContent = 'Отлично';
-    document.body.appendChild(successMessage);
-    const closeSuccessMessage = () => closeMessage(successMessage);
-    document.addEventListener('keydown', (evt) => onDocumentEscape(evt, closeSuccessMessage), {once: true});
-    successButton.addEventListener('click', closeSuccessMessage, {once: true});
-  };
-
-  // Функция отображения сообщения об ошибке
-  const showErrorMessage = () => {
-    const errorMessageTemplate = document.querySelector('#error')
-      .content.querySelector('.error');
-    const errorMessage = errorMessageTemplate.cloneNode(true);
-    const errorTitle = errorMessage.querySelector('.error__title');
-    errorTitle.textContent = 'Произошли ошибки во время загузки';
-    const errorButton = errorMessage.querySelector('.error__button');
-    errorButton.textContent = 'Понятно';
-    document.body.appendChild(errorMessage);
-    const closeErrorMessage = () => closeMessage(errorMessage);
-    document.removeEventListener('keydown', onOverlayEscape);
-    errorButton.addEventListener('click', closeErrorMessage, {once: true});
+  // Функция отображения сообщения о статусе отправки формы
+  const showStatusMessage = (
+    messageTemplateId,
+    messageTemplateClass,
+    messageTitle,
+    messageTitleText,
+    messageButtonClass,
+    messageButtonText,
+    messageInnerClass
+  ) => {
+    const messageTemplate = document.querySelector(messageTemplateId).content.querySelector(messageTemplateClass);
+    const statusMessage = messageTemplate.cloneNode(true);
+    const statusTitle = statusMessage.querySelector(messageTitle);
+    statusTitle.textContent = messageTitleText;
+    const statusButton = statusMessage.querySelector(messageButtonClass);
+    statusButton.textContent = messageButtonText;
+    document.body.appendChild(statusMessage);
+    const onStatusMessageOutClick = (evt) => {
+      if (!evt.target.closest(messageInnerClass)) {
+        closeStatusMessage();
+      }
+    };
+    function closeStatusMessage () {
+      statusMessage.classList.add('hidden');
+      statusMessage.removeEventListener('click', onStatusMessageOutClick);
+    }
+    statusMessage.addEventListener('click', onStatusMessageOutClick);
+    statusButton.addEventListener('click', closeStatusMessage, {once: true});
     document.addEventListener('keydown', (evt) => {
-      onDocumentEscape(evt, closeErrorMessage);
-      document.addEventListener('keydown', onOverlayEscape, {once: true});
+      onDocumentEscape(evt, closeStatusMessage);
+      if (messageTemplate.classList.contains('.error')) {
+        document.addEventListener('keydown', onOverlayEscape, {once: true});
+      }
     }, {once: true});
   };
 
@@ -142,12 +165,12 @@ const uploadPhoto = () => {
     pristine.validate();
     const isValid = pristine.validate();
     if (isValid) {
-      uploadForm.submit();
-      showSuccessMessage();
-      resetFormFields();
-      onUploadCancelClick();
+      closeUploadOverlay();
+      //uploadForm.submit();
+      showStatusMessage(...SUCCESS_MESSAGE_PARAMETERS);
     } else {
-      showErrorMessage();
+      document.removeEventListener('keydown', onOverlayEscape);
+      showStatusMessage(...ERROR_MESSAGE_PARAMETERS);
     }
   }
 
