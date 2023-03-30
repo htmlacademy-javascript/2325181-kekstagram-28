@@ -96,24 +96,16 @@ const showBigPicture = (descriptionList) => {
     }
     document.querySelector('body').classList.remove('modal-open');
     bigPictureLikes.removeEventListener('click', onLikesClick);
-    bigPicture.removeEventListener('click', onPreviewOutsideClick, true);
     bigPictureCommentsLoader.removeEventListener('click', addMoreComments);
     bigPicture.classList.add('hidden');
     getScroll();
   };
 
-  // Вызов функции закрытия по клику за пределами полноразмерного фото
-  function onPreviewOutsideClick(evt) {
-    if (!evt.target.closest('.big-picture__preview')) {
-      bigPictureClose();
-    }
-  }
-
   // Вызов функции закрытия по нажатию Esc
   const escapeModal = (evt) => onDocumentEscape(evt, bigPictureClose);
 
   // Функция открытия полноразмерного фото
-  const bigPictureOpen = (evt) => {
+  const onPictureClick = (evt) => {
     if (evt.target.matches('.picture__img')) {
       targetNode = evt.target;
       bigPicture.dataset.bigPictureId = targetNode.closest('.picture').dataset.thumbnailId;
@@ -134,7 +126,6 @@ const showBigPicture = (descriptionList) => {
       bigPicture.classList.remove('hidden');
       document.addEventListener('keydown', escapeModal, {once: true});
       bigPictureReset.addEventListener('click', bigPictureClose, {once: true});
-      bigPicture.addEventListener('click', onPreviewOutsideClick, true);
       bigPictureLikes.addEventListener('click', onLikesClick);
       bigPictureCommentsLoader.addEventListener('click', addMoreComments);
 
@@ -142,7 +133,7 @@ const showBigPicture = (descriptionList) => {
   };
 
   // Вызов функции открытия по нажатию на миниатюру
-  document.querySelector('.pictures').addEventListener('click', bigPictureOpen);
+  document.querySelector('.pictures').addEventListener('click', onPictureClick);
 
 };
 

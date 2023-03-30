@@ -5,6 +5,12 @@ const renderPictures = (descriptionList) => {
   // Находим в DOM контейнер для изображений от других пользователей
   const picturesContainer = document.querySelector('.pictures');
 
+  // Определяем коллекцию прежних фотографий (на случай отрисовки после применения фильтра) и удаляем ее
+  const picturesOld = picturesContainer.querySelectorAll('.picture');
+  if (picturesOld.length > 0) {
+    picturesOld.forEach((picture) => picture.remove());
+  }
+
   // Создаем фрагмент для хранения фотографий
   const picturesFragment = document.createDocumentFragment();
 
