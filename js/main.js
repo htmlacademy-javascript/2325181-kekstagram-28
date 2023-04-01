@@ -1,13 +1,13 @@
-import {getDescriptionList} from './data.js';
+import {getDataErrorMessageParameters} from './upload-form.js';
+import {getData} from './api.js';
 import {renderPictures} from './render.js';
 import {showBigPicture} from './fullsize.js';
-import {uploadPhoto} from './upload-form.js';
 
-
-const descriptionList = getDescriptionList();
-
-renderPictures(descriptionList);
-
-showBigPicture(descriptionList);
-
-uploadPhoto();
+getData()
+  .then((data) => {
+    renderPictures(data);
+    showBigPicture(data);
+  })
+  .catch(() => {
+    getDataErrorMessageParameters();
+  });

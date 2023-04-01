@@ -6,7 +6,7 @@ const PHOTOS_QUANTITY = 25;
 const COMMENTS_QUANTITY_MAX = 30;
 
 //Сообщения в комменатриях
-const Messages = [
+const MESSAGES = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -16,7 +16,7 @@ const Messages = [
 ];
 
 //Сообщения в комменатриях
-const Names = [
+const NAMES = [
   'Валерия',
   'Иван',
   'Артём',
@@ -35,7 +35,7 @@ const Names = [
 ];
 
 //Описания фотографий
-const PhotoDescriptions = [
+const PHOTO_DESCRIPTIONS = [
   'красивое фото, но не для сна.',
   'а это мы с мужем в день нашей свадьбы. Он стоит в свадебном костюме, а я в черном платье.',
   'а это мы гуляли по парку и я сказал, что мне надоело, а она ответила: "Ладно, пошли домой"',
@@ -67,8 +67,8 @@ const getPhotoId = getRandomId(1, PHOTOS_QUANTITY);
 const getNewComment = () => ({
   id: getCommentId(),
   avatar: `img/avatar-${getRandomNumber(1, 6)}.svg`,
-  message: getRandomArrayElement (Messages),
-  name: getRandomArrayElement(Names)
+  message: getRandomArrayElement (MESSAGES),
+  name: getRandomArrayElement(NAMES)
 });
 
 // Генерация списка комментариев
@@ -78,7 +78,7 @@ const getCommentList = () => Array.from({length: getRandomNumber(1, COMMENTS_QUA
 const getNewDescription = () => ({
   id: getDescriptionId(),
   url: `photos/${getPhotoId()}.jpg`,
-  description: getRandomArrayElement(PhotoDescriptions),
+  description: getRandomArrayElement(PHOTO_DESCRIPTIONS),
   likes: getRandomNumber(15, 200),
   comments: getCommentList()
 });
