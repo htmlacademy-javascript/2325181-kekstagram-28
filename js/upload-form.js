@@ -1,6 +1,6 @@
 import {createSlider, removeSlider} from './effect.js';
 import {resetScale, addManageScale} from './scale.js';
-import {onDocumentEscape} from './util.js';
+import {onDocumentEscape, isImage} from './util.js';
 import {postData} from './api.js';
 
 const SUCCESS_MESSAGE_PARAMETERS = [
@@ -167,9 +167,13 @@ pristine.addValidator(textDescription, checkDescriptionLength, 'Длина ко�
 
 // Обработчик выбора файла для загрузки
 const onUploadFileSelect = () => {
+  const image = uploadFile.files[0];
+  if (!isImage(image)) {
+    return;
+  }
   uploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  uploadPreview.src = URL.createObjectURL(uploadFile.files[0]);
+  uploadPreview.src = URL.createObjectURL(image);
   uploadPreview.alt = 'Моя фотография';
   document.addEventListener('keydown', onOverlayEscape);
   uploadCancel.addEventListener('click', onUploadCancelClick, {once: true});
