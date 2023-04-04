@@ -39,20 +39,21 @@ const GET_DATA_ERROR_MESSAGE_PARAMETERS = [
 // Элементы формы загрузки изображения, константы регулярных выражений и количества для проверки хэштегов
 const MAX_HASHTAG_COUNT = 5;
 const REGEX_HASHTAG = /^#[a-zа-яё0-9]{1,19}$/i;
-const uploadFile = document.querySelector('#upload-file');
+const fileUploadInput = document.querySelector('#upload-file');
 const uploadForm = document.querySelector('#upload-select-image');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const submitButton = uploadOverlay.querySelector('.img-upload__submit');
 const textHashtags = uploadOverlay.querySelector('.text__hashtags');
 const textDescription = uploadOverlay.querySelector('.text__description');
-const uploadCancel = uploadOverlay.querySelector('.img-upload__cancel');
+const uploadCancelButton = uploadOverlay.querySelector('.img-upload__cancel');
+let objectUrl;
 const uploadPreview = uploadOverlay
   .querySelector('.img-upload__preview')
   .querySelector('img');
 
 // Функция сброса значений полей формы
 const resetFormFields = () => {
-  uploadFile.value = '';
+  fileUploadInput.value = '';
   textHashtags.value = '';
   textDescription.value = '';
 };
@@ -70,6 +71,7 @@ const closeUploadOverlay = () => {
   resetFormFields();
   removeSlider();
   pristine.reset();
+  URL.revokeObjectURL(objectUrl);
   uploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onOverlayEscape);
@@ -138,14 +140,14 @@ const getDataErrorMessageParameters = () => showStatusMessage(...GET_DATA_ERROR_
 const getArrayOfHashTags = (value) => value.trim().split(' ').filter((hashTag) => hashTag.trim().length);
 
 // Функция проверки уникальности хэштегов без учета регистра
-const uniqueHashTags = (value) => {
+const areHashTagsUnique = (value) => {
   const hashTags = getArrayOfHashTags(value);
   const lowerCaseHashTags = hashTags.map((hashTag) => hashTag.toLowerCase());
   return lowerCaseHashTags.length === new Set(lowerCaseHashTags).size;
 };
 
 // Функция проверки хэштегов на соответствие формату и длине
-const everyHashTagValid = (value) => {
+const areHashTagsValid = (value) => {
   if (value.length > 0) {
     const hashTags = getArrayOfHashTags(value);
     return hashTags.every((hashTag) => REGEX_HASHTAG.test(hashTag));
@@ -160,23 +162,24 @@ const hasValidCount = (value) => getArrayOfHashTags(value).length <= MAX_HASHTAG
 const checkDescriptionLength = (value) => value.length <= 140;
 
 // Валидаторы Pristine по количеству, формату, длине, уникальности хэштегов
-pristine.addValidator(textHashtags, uniqueHashTags, 'Один и тот же хэш-тег не может быть использован дважды');
-pristine.addValidator(textHashtags, everyHashTagValid, 'Максимальная длина одного хэш-тега 20 символов, включая решётку. Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.');
+pristine.addValidator(textHashtags, areHashTagsUnique, 'Один и тот же хэш-тег не может быть использован дважды');
+pristine.addValidator(textHashtags, areHashTagsValid, 'Максимальная длина одного хэш-тега 20 символов, включая решётку. Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.');
 pristine.addValidator(textHashtags, hasValidCount, 'нельзя указать больше пяти хэш-тегов');
 pristine.addValidator(textDescription, checkDescriptionLength, 'Длина комментария не может составлять более 140 символов.');
 
 // Обработчик выбора файла для загрузки
 const onUploadFileSelect = () => {
-  const image = uploadFile.files[0];
+  const image = fileUploadInput.files[0];
+  objectUrl = URL.createObjectURL(image);
   if (!isImage(image)) {
     return;
   }
   uploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  uploadPreview.src = URL.createObjectURL(image);
+  uploadPreview.src = objectUrl;
   uploadPreview.alt = 'Моя фотография';
   document.addEventListener('keydown', onOverlayEscape);
-  uploadCancel.addEventListener('click', onUploadCancelClick, {once: true});
+  uploadCancelButton.addEventListener('click', onUploadCancelClick, {once: true});
   uploadForm.addEventListener('submit', submitForm);
   addManageScale();
   createSlider();
@@ -193,7 +196,6 @@ const unblockSubmitButton = () => {
   submitButton.disabled = false;
   submitButton.textContent = 'ОПУБЛИКОВАТЬ';
 };
-
 
 // Функция отправки формы на сервер (на данный момент только валидация)
 function submitForm(evt) {
@@ -215,6 +217,6 @@ function submitForm(evt) {
 }
 
 // Обработчик открытия формы редактирования изображения по выбору файла для загрузки
-uploadFile.addEventListener('change', onUploadFileSelect);
+fileUploadInput.addEventListener('change', onUploadFileSelect);
 
 export { getDataErrorMessageParameters };
