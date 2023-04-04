@@ -122,7 +122,6 @@ const showStatusMessage = (
     statusMessage.classList.add('hidden');
     if (messageTemplate.classList.contains('error') && postDataError) {
       document.addEventListener('keydown', onOverlayEscape);
-      uploadOverlay.classList.remove('hidden');
     }
     statusMessage.removeEventListener('click', onStatusMessageOutClick);
   }
@@ -209,7 +208,6 @@ function submitForm(evt) {
       })
       .catch(() => {
         document.removeEventListener('keydown', onOverlayEscape);
-        uploadOverlay.classList.add('hidden');
         showStatusMessage(...ERROR_MESSAGE_PARAMETERS);
       })
       .finally(unblockSubmitButton);
