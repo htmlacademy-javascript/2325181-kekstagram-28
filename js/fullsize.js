@@ -49,7 +49,11 @@ const showBigPicture = (descriptionList) => {
 
   // Функция отображения количества комментариев в полноэкранном изображении
   const setCommentsCount = (shown) => {
-    bigPictureSocialComments.innerHTML = `${shown} из  <span class="comments-count">${bigPictureComments}</span> комментариев`;
+    bigPictureSocialComments.textContent = '';
+    const newSpan = document.createElement('span');
+    newSpan.classList.add('comments-count');
+    newSpan.textContent = `${bigPictureComments}`;
+    bigPictureSocialComments.append(`${shown} из `, newSpan, ' комментариев');
   };
 
   // Функция добавления комментариев

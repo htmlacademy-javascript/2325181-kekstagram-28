@@ -1,27 +1,3 @@
-// Генератор случайных чисел
-const getRandomNumber = (min, max) => {
-  const from = Math.ceil(Math.min(min, max));
-  const till = Math.floor(Math.max(min, max));
-  const result = Math.random() * (till - from + 1) + from;
-  return Math.floor(result);
-};
-
-// Генератор случайных неповторяющихся чисел
-const getRandomId = (min, max) => {
-  const idList = [];
-  return function () {
-    let currentValue = getRandomNumber(min, max);
-    while (idList.includes(currentValue)) {
-      currentValue = getRandomNumber(min, max);
-    }
-    idList.push(currentValue);
-    return currentValue;
-  };
-};
-
-// Генератор случайного индекса массива
-const getRandomArrayElement = (arrayInput) => arrayInput[getRandomNumber(0, arrayInput.length - 1)];
-
 // Функция определения нажатия Esc
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
@@ -48,5 +24,23 @@ const rememberScroll = () => {
   };
 };
 
+// Функция debounce для устранения дребезга:
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
 
-export { getRandomNumber, getRandomId, getRandomArrayElement, isEscapeKey, rememberScroll, onDocumentEscape };
+// Функция получения случайной позиции для сортировки элементов в массиве
+const getRandomPosition = () => Math.random() - 0.5;
+
+// Функция проверки выбранного изображения на тип файла
+const isImage = (image) => {
+  const IMAGE_EXTENTIONS = ['jpg', 'jpeg', 'png'];
+  const imageName = image.name.toLowerCase();
+  return IMAGE_EXTENTIONS.some((extension) => imageName.endsWith(extension));
+};
+
+export {isEscapeKey, rememberScroll, onDocumentEscape, debounce, getRandomPosition, isImage };

@@ -1,13 +1,13 @@
 const Effects = {
-  none: [0, 100, 1, 'none', ''],
-  chrome: [0, 1, 0.1, 'grayscale', ''],
-  sepia: [0, 1, 0.1, 'sepia', ''],
-  marvin: [ 0, 100, 1,'invert','%'],
-  phobos: [0, 3, 0.1, 'blur', 'px'],
-  heat: [1, 3, 0.1, 'brightness', '']
+  NONE: [0, 100, 1, 'none', ''],
+  CHROME: [0, 1, 0.1, 'grayscale', ''],
+  SEPIA: [0, 1, 0.1, 'sepia', ''],
+  MARVIN: [ 0, 100, 1,'invert','%'],
+  PHOBOS: [0, 3, 0.1, 'blur', 'px'],
+  HEAT: [1, 3, 0.1, 'brightness', '']
 };
 
-let appliedEffect = 'none';
+let appliedEffect = 'NONE';
 const imageUploadPreview = document.querySelector('.img-upload__preview img');
 const imageUploadEffects = document.querySelector('.img-upload__effects');
 const effectLevelSlider = document.querySelector('.effect-level__slider');
@@ -44,8 +44,8 @@ const onEffectsChange = (evt) => {
   if (!evt.target.classList.contains('effects__radio')) {
     return;
   }
-  appliedEffect = evt.target.value;
-  if (appliedEffect === 'none') {
+  appliedEffect = evt.target.value.toUpperCase();
+  if (appliedEffect === 'NONE') {
     resetEffects();
   } else {
     imageUploadPreview.className = `effects__preview--${Effects[appliedEffect][3]}`;
@@ -63,7 +63,7 @@ const onSliderUpdate = () => {
 
 // Функция создания слайдера
 const createSlider = () => {
-  noUiSlider.create(effectLevelSlider, configureSlider('none'));
+  noUiSlider.create(effectLevelSlider, configureSlider('NONE'));
   resetEffects();
   imageUploadEffects.addEventListener('change', onEffectsChange);
   effectLevelSlider.noUiSlider.on('update', onSliderUpdate);
@@ -72,7 +72,7 @@ const createSlider = () => {
 // Функция удаления слайдера
 const removeSlider = () => {
   resetEffects();
-  appliedEffect = 'none';
+  appliedEffect = 'NONE';
   document.querySelector('#effect-none').checked = true;
   imageUploadEffects.removeEventListener('change', onEffectsChange);
   effectLevelSlider.noUiSlider.destroy();
