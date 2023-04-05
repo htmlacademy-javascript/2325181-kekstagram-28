@@ -43,4 +43,4 @@ const isImage = (image) => {
   return IMAGE_EXTENTIONS.some((extension) => imageName.endsWith(extension));
 };
 
-export {isEscapeKey, rememberScroll, onDocumentEscape, debounce, getRandomPosition, isImage };
+export { isEscapeKey, rememberScroll, onDocumentEscape, debounce, getRandomPosition, isImage };

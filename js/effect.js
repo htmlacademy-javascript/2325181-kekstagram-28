@@ -1,4 +1,4 @@
-const Effects = {
+const EffectStyle = {
   NONE: [0, 100, 1, 'none', ''],
   CHROME: [0, 1, 0.1, 'grayscale', ''],
   SEPIA: [0, 1, 0.1, 'sepia', ''],
@@ -16,7 +16,7 @@ const effectLevelValue = document.querySelector('.effect-level__value');
 
 //Функция конфигурирования слайдера
 const configureSlider = (effect) => {
-  const [rangeMin, rangeMax, rangeStep] = Effects[effect];
+  const [rangeMin, rangeMax, rangeStep] = EffectStyle[effect];
   const sliderConfiguration = {
     range: {
       min: rangeMin,
@@ -48,7 +48,7 @@ const onEffectsChange = (evt) => {
   if (appliedEffect === 'NONE') {
     resetEffects();
   } else {
-    imageUploadPreview.className = `effects__preview--${Effects[appliedEffect][3]}`;
+    imageUploadPreview.className = `effects__preview--${EffectStyle[appliedEffect][3]}`;
     imageUploadEffectLevel.classList.remove('hidden');
     updateSlider(appliedEffect);
   }
@@ -57,7 +57,7 @@ const onEffectsChange = (evt) => {
 // Обработчик изменения значений слайдера
 const onSliderUpdate = () => {
   const sliderValue = effectLevelSlider.noUiSlider.get();
-  imageUploadPreview.style.filter = `${Effects[appliedEffect][3]}(${sliderValue}${Effects[appliedEffect][4]})`;
+  imageUploadPreview.style.filter = `${EffectStyle[appliedEffect][3]}(${sliderValue}${EffectStyle[appliedEffect][4]})`;
   effectLevelValue.value = sliderValue;
 };
 

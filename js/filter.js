@@ -1,4 +1,4 @@
-import { getRandomPosition } from './util.js';
+import {getRandomPosition} from './util.js';
 
 const RANDOM_PICTURES_COUNT = 10;
 const Filter = {
