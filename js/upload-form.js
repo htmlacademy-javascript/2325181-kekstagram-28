@@ -36,8 +36,8 @@ const GET_DATA_ERROR_MESSAGE_PARAMETERS = [
   false
 ];
 
-// Элементы формы загрузки изображения, константы регулярных выражений и количества для проверки хэштегов
 const MAX_HASHTAG_COUNT = 5;
+const COMMENT_MAX_LENGTH = 140;
 const REGEX_HASHTAG = /^#[a-zа-яё0-9]{1,19}$/i;
 const fileUploadInput = document.querySelector('#upload-file');
 const uploadForm = document.querySelector('#upload-select-image');
@@ -51,21 +51,18 @@ const uploadPreview = uploadOverlay
   .querySelector('.img-upload__preview')
   .querySelector('img');
 
-// Функция сброса значений полей формы
 const resetFormFields = () => {
   fileUploadInput.value = '';
   textHashtags.value = '';
   textDescription.value = '';
 };
 
-// Конструктор Pristine
 const pristine = new Pristine(uploadForm, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__field-wrapper__error',
 }, true);
 
-// Функция закрытия формы редактирования изображения
 const closeUploadOverlay = () => {
   resetScale();
   resetFormFields();
@@ -78,22 +75,18 @@ const closeUploadOverlay = () => {
   uploadForm.removeEventListener('submit', submitForm);
 };
 
-// Обработчик закрытия формы редактирования изображения по нажатию кнопки Х
 const onUploadCancelClick = () => closeUploadOverlay();
 
-// Функция проверки фокуса на текстовой части формы редактирования
 const isTextFieldFocused = () =>
   document.activeElement === textHashtags ||
   document.activeElement === textDescription;
 
-// Обработчик выхода из формы редактирования по нажатию Escape
 function onOverlayEscape(evt) {
   if (!isTextFieldFocused()) {
     onDocumentEscape(evt, onUploadCancelClick);
   }
 }
 
-// Функция отображения сообщения о статусе отправки формы
 const showStatusMessage = (
   messageTemplateId,
   messageTemplateClass,
@@ -132,20 +125,16 @@ const showStatusMessage = (
   }, {once: true});
 };
 
-// Функция отображения сообщения об ошибке загрузки данных с сервера
 const getDataErrorMessageParameters = () => showStatusMessage(...GET_DATA_ERROR_MESSAGE_PARAMETERS);
 
-// Функция получения массива хэштегов
 const getArrayOfHashTags = (value) => value.trim().split(' ').filter((hashTag) => hashTag.trim().length);
 
-// Функция проверки уникальности хэштегов без учета регистра
 const areHashTagsUnique = (value) => {
   const hashTags = getArrayOfHashTags(value);
   const lowerCaseHashTags = hashTags.map((hashTag) => hashTag.toLowerCase());
   return lowerCaseHashTags.length === new Set(lowerCaseHashTags).size;
 };
 
-// Функция проверки хэштегов на соответствие формату и длине
 const areHashTagsValid = (value) => {
   if (value.length > 0) {
     const hashTags = getArrayOfHashTags(value);
@@ -154,19 +143,15 @@ const areHashTagsValid = (value) => {
   return true;
 };
 
-// Функция проверки количества введенных хэштегов
 const hasValidCount = (value) => getArrayOfHashTags(value).length <= MAX_HASHTAG_COUNT;
 
-// Функция проверки длины поля комментария
-const checkDescriptionLength = (value) => value.length <= 140;
+const checkDescriptionLength = (value) => value.length <= COMMENT_MAX_LENGTH;
 
-// Валидаторы Pristine по количеству, формату, длине, уникальности хэштегов
 pristine.addValidator(textHashtags, areHashTagsUnique, 'Один и тот же хэш-тег не может быть использован дважды');
 pristine.addValidator(textHashtags, areHashTagsValid, 'Максимальная длина одного хэш-тега 20 символов, включая решётку. Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.');
 pristine.addValidator(textHashtags, hasValidCount, 'нельзя указать больше пяти хэш-тегов');
 pristine.addValidator(textDescription, checkDescriptionLength, 'Длина комментария не может составлять более 140 символов.');
 
-// Обработчик выбора файла для загрузки
 const onUploadFileSelect = () => {
   const image = fileUploadInput.files[0];
   objectUrl = URL.createObjectURL(image);
@@ -184,19 +169,16 @@ const onUploadFileSelect = () => {
   createSlider();
 };
 
-// Функция блокировки кнопки отправки формы
 const blockSubmitButton = () => {
   submitButton.disabled = true;
   submitButton.textContent = 'ПУБЛИКУЕМ...';
 };
 
-// Функция разблокировки кнопки отправки формы
 const unblockSubmitButton = () => {
   submitButton.disabled = false;
   submitButton.textContent = 'ОПУБЛИКОВАТЬ';
 };
 
-// Функция отправки формы на сервер (на данный момент только валидация)
 function submitForm(evt) {
   evt.preventDefault();
   if (pristine.validate()) {
@@ -214,7 +196,6 @@ function submitForm(evt) {
   }
 }
 
-// Обработчик открытия формы редактирования изображения по выбору файла для загрузки
 fileUploadInput.addEventListener('change', onUploadFileSelect);
 
 export { getDataErrorMessageParameters };

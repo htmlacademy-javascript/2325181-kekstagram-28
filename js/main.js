@@ -8,7 +8,7 @@ import {debounce} from './util.js';
 getData()
   .then((data) => {
     renderPictures(data);
-    const debouncedRenderPictures = debounce(renderPictures, 500);
+    const debouncedRenderPictures = debounce(renderPictures);
     activateImageFilter(data, debouncedRenderPictures);
     showBigPicture(data);
   })
