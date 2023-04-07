@@ -10,11 +10,9 @@ const imageFilter = document.querySelector('.img-filters');
 let currentFilter = Filter.DEFAULT;
 let pictures = [];
 
-// Функция получения разницы в количестве комментариев для сортировки фотографий
 const getCommentsDifference = (pictureA, pictureB) =>
   pictureB.comments.length - pictureA.comments.length;
 
-// Функция сортировки фотографий
 const getFilteredPictures = () => {
   switch (currentFilter) {
     case Filter.RANDOM:
@@ -26,7 +24,6 @@ const getFilteredPictures = () => {
   }
 };
 
-// Функция установки слушателя переключения фильтра фотографий
 const setOnFilterClick = (callback) => {
   imageFilter.addEventListener('click', (evt) => {
     const appliedFilter = evt.target;
@@ -42,7 +39,6 @@ const setOnFilterClick = (callback) => {
   });
 };
 
-// Функция включения панели фильтра фотографий
 const activateImageFilter = (loadedPictures, callback) => {
   imageFilter.classList.remove('img-filters--inactive');
   pictures = [...loadedPictures];

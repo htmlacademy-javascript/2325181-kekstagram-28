@@ -14,7 +14,6 @@ const effectLevelSlider = document.querySelector('.effect-level__slider');
 const imageUploadEffectLevel = document.querySelector('.img-upload__effect-level');
 const effectLevelValue = document.querySelector('.effect-level__value');
 
-//Функция конфигурирования слайдера
 const configureSlider = (effect) => {
   const [rangeMin, rangeMax, rangeStep] = EffectStyle[effect];
   const sliderConfiguration = {
@@ -29,17 +28,14 @@ const configureSlider = (effect) => {
   return sliderConfiguration;
 };
 
-// Функция сброса эффектов
 const resetEffects = () => {
   imageUploadPreview.className = '';
   imageUploadPreview.style.filter = '';
   imageUploadEffectLevel.classList.add('hidden');
 };
 
-//Функция обновления параметров слайдера
 const updateSlider = (effect) => effectLevelSlider.noUiSlider.updateOptions(configureSlider(effect));
 
-// Обработчик смены эффекта
 const onEffectsChange = (evt) => {
   if (!evt.target.classList.contains('effects__radio')) {
     return;
@@ -54,14 +50,12 @@ const onEffectsChange = (evt) => {
   }
 };
 
-// Обработчик изменения значений слайдера
 const onSliderUpdate = () => {
   const sliderValue = effectLevelSlider.noUiSlider.get();
   imageUploadPreview.style.filter = `${EffectStyle[appliedEffect][3]}(${sliderValue}${EffectStyle[appliedEffect][4]})`;
   effectLevelValue.value = sliderValue;
 };
 
-// Функция создания слайдера
 const createSlider = () => {
   noUiSlider.create(effectLevelSlider, configureSlider('NONE'));
   resetEffects();
@@ -69,7 +63,6 @@ const createSlider = () => {
   effectLevelSlider.noUiSlider.on('update', onSliderUpdate);
 };
 
-// Функция удаления слайдера
 const removeSlider = () => {
   resetEffects();
   appliedEffect = 'NONE';

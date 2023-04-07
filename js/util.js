@@ -1,7 +1,5 @@
-// Функция определения нажатия Esc
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-// Функция закрытия по нажатию Esc
 const onDocumentEscape = (evt, closingFunction) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -9,7 +7,6 @@ const onDocumentEscape = (evt, closingFunction) => {
   }
 };
 
-// Функция сохранения/получения позиции скролла экрана в момент открытия закрытия полноразмерного фото
 const rememberScroll = () => {
   let currentScroll = 0;
   return () => {
@@ -24,7 +21,6 @@ const rememberScroll = () => {
   };
 };
 
-// Функция debounce для устранения дребезга:
 const debounce = (callback, timeoutDelay = 500) => {
   let timeoutId;
   return (...rest) => {
@@ -33,10 +29,8 @@ const debounce = (callback, timeoutDelay = 500) => {
   };
 };
 
-// Функция получения случайной позиции для сортировки элементов в массиве
 const getRandomPosition = () => Math.random() - 0.5;
 
-// Функция проверки выбранного изображения на тип файла
 const isImage = (image) => {
   const IMAGE_EXTENTIONS = ['jpg', 'jpeg', 'png'];
   const imageName = image.name.toLowerCase();
