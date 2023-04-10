@@ -1,4 +1,4 @@
-const renderPictures = (pictureId) => {
+const renderPictures = (pictureData) => {
   const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
   const picturesContainer = document.querySelector('.pictures');
@@ -10,7 +10,7 @@ const renderPictures = (pictureId) => {
 
   const picturesFragment = document.createDocumentFragment();
 
-  pictureId.forEach(({id, url, likes, comments, description}) => {
+  pictureData.forEach(({id, url, likes, comments, description}) => {
     const pictureElement = pictureTemplate.cloneNode(true);
     pictureElement.dataset.thumbnailId = id;
     pictureElement.querySelector('.picture__img').src = url;
