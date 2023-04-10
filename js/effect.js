@@ -13,6 +13,8 @@ const imageUploadEffects = document.querySelector('.img-upload__effects');
 const effectLevelSlider = document.querySelector('.effect-level__slider');
 const imageUploadEffectLevel = document.querySelector('.img-upload__effect-level');
 const effectLevelValue = document.querySelector('.effect-level__value');
+const EFFECT_VALUE_INDEX = 3;
+const UNITS_INDEX = 4;
 
 const configureSlider = (effect) => {
   const [rangeMin, rangeMax, rangeStep] = EffectStyle[effect];
@@ -44,7 +46,7 @@ const onEffectsChange = (evt) => {
   if (appliedEffect === 'NONE') {
     resetEffects();
   } else {
-    imageUploadPreview.className = `effects__preview--${EffectStyle[appliedEffect][3]}`;
+    imageUploadPreview.className = `effects__preview--${EffectStyle[appliedEffect][EFFECT_VALUE_INDEX]}`;
     imageUploadEffectLevel.classList.remove('hidden');
     updateSlider(appliedEffect);
   }
@@ -52,7 +54,7 @@ const onEffectsChange = (evt) => {
 
 const onSliderUpdate = () => {
   const sliderValue = effectLevelSlider.noUiSlider.get();
-  imageUploadPreview.style.filter = `${EffectStyle[appliedEffect][3]}(${sliderValue}${EffectStyle[appliedEffect][4]})`;
+  imageUploadPreview.style.filter = `${EffectStyle[appliedEffect][EFFECT_VALUE_INDEX]}(${sliderValue}${EffectStyle[appliedEffect][UNITS_INDEX]})`;
   effectLevelValue.value = sliderValue;
 };
 

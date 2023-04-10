@@ -70,16 +70,18 @@ const showBigPicture = (pictureData) => {
 
   const getScroll = rememberScroll();
 
-  const closeBigPicture = () => {
+  const onModalEscape = (evt) => escapeDocument(evt, closeBigPicture);
+  const onBigPictureClose = () => closeBigPicture();
+
+  function closeBigPicture() {
     removeComments();
     document.querySelector('body').classList.remove('modal-open');
+    document.removeEventListener('keydown', onModalEscape);
+    bigPictureReset.removeEventListener('click', onBigPictureClose);
     bigPictureCommentsLoader.removeEventListener('click', onCommentsLoaderClick);
     bigPicture.classList.add('hidden');
     getScroll();
-  };
-
-  const onModalEscape = (evt) => escapeDocument(evt, closeBigPicture);
-  const onBigPictureClose = () => closeBigPicture();
+  }
 
   const onPictureClick = (evt) => {
     if (evt.target.matches('.picture__img')) {
