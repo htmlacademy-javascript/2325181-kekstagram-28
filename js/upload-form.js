@@ -111,18 +111,21 @@ const showStatusMessage = (
       closeStatusMessage();
     }
   };
+  const onStatusEscape = (evt) => {
+    escapeDocument(evt, closeStatusMessage);
+  };
   function closeStatusMessage () {
     statusMessage.classList.add('hidden');
     if (messageTemplate.classList.contains('error') && postDataError) {
       document.addEventListener('keydown', onOverlayEscape);
     }
     statusMessage.removeEventListener('click', onStatusMessageOutClick);
+    statusButton.removeEventListener('click', closeStatusMessage);
+    document.removeEventListener('keydown', onStatusEscape);
   }
   statusMessage.addEventListener('click', onStatusMessageOutClick);
   statusButton.addEventListener('click', closeStatusMessage, {once: true});
-  document.addEventListener('keydown', (evt) => {
-    escapeDocument(evt, closeStatusMessage);
-  }, {once: true});
+  document.addEventListener('keydown', onStatusEscape, {once: true});
 };
 
 const getDataErrorMessageParameters = () => showStatusMessage(...GET_DATA_ERROR_MESSAGE_PARAMETERS);
