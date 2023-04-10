@@ -1,6 +1,6 @@
 import {createSlider, removeSlider} from './effect.js';
 import {resetScale, addManageScale} from './scale.js';
-import {onDocumentEscape, isImage} from './util.js';
+import {escapeDocument, isImage} from './util.js';
 import {postData} from './api.js';
 
 const SUCCESS_MESSAGE_PARAMETERS = [
@@ -72,7 +72,7 @@ const closeUploadOverlay = () => {
   uploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onOverlayEscape);
-  uploadForm.removeEventListener('submit', submitForm);
+  uploadForm.removeEventListener('submit', onFormSubmit);
 };
 
 const onUploadCancelClick = () => closeUploadOverlay();
@@ -83,7 +83,7 @@ const isTextFieldFocused = () =>
 
 function onOverlayEscape(evt) {
   if (!isTextFieldFocused()) {
-    onDocumentEscape(evt, onUploadCancelClick);
+    escapeDocument(evt, onUploadCancelClick);
   }
 }
 
@@ -121,7 +121,7 @@ const showStatusMessage = (
   statusMessage.addEventListener('click', onStatusMessageOutClick);
   statusButton.addEventListener('click', closeStatusMessage, {once: true});
   document.addEventListener('keydown', (evt) => {
-    onDocumentEscape(evt, closeStatusMessage);
+    escapeDocument(evt, closeStatusMessage);
   }, {once: true});
 };
 
@@ -164,7 +164,7 @@ const onUploadFileSelect = () => {
   uploadPreview.alt = 'Моя фотография';
   document.addEventListener('keydown', onOverlayEscape);
   uploadCancelButton.addEventListener('click', onUploadCancelClick, {once: true});
-  uploadForm.addEventListener('submit', submitForm);
+  uploadForm.addEventListener('submit', onFormSubmit);
   addManageScale();
   createSlider();
 };
@@ -179,7 +179,7 @@ const unblockSubmitButton = () => {
   submitButton.textContent = 'ОПУБЛИКОВАТЬ';
 };
 
-function submitForm(evt) {
+function onFormSubmit(evt) {
   evt.preventDefault();
   if (pristine.validate()) {
     blockSubmitButton();

@@ -1,4 +1,4 @@
-import {rememberScroll, onDocumentEscape} from './util.js';
+import {rememberScroll, escapeDocument} from './util.js';
 
 const ADD_MORE_COMMENTS_COUNT = 5;
 
@@ -78,7 +78,8 @@ const showBigPicture = (pictureData) => {
     getScroll();
   };
 
-  const escapeModal = (evt) => onDocumentEscape(evt, closeBigPicture);
+  const onModalEscape = (evt) => escapeDocument(evt, closeBigPicture);
+  const onBigPictureClose = () => closeBigPicture();
 
   const onPictureClick = (evt) => {
     if (evt.target.matches('.picture__img')) {
@@ -92,8 +93,8 @@ const showBigPicture = (pictureData) => {
       document.body.classList.add('modal-open');
       getScroll();
       bigPicture.classList.remove('hidden');
-      document.addEventListener('keydown', escapeModal, {once: true});
-      bigPictureReset.addEventListener('click', closeBigPicture, {once: true});
+      document.addEventListener('keydown', onModalEscape, {once: true});
+      bigPictureReset.addEventListener('click', onBigPictureClose, {once: true});
       bigPictureCommentsLoader.addEventListener('click', onCommentsLoaderClick);
 
     }

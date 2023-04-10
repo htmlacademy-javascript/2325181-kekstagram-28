@@ -1,6 +1,6 @@
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-const onDocumentEscape = (evt, closingFunction) => {
+const escapeDocument = (evt, closingFunction) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
     closingFunction();
@@ -37,4 +37,4 @@ const isImage = (image) => {
   return IMAGE_EXTENTIONS.some((extension) => imageName.endsWith(extension));
 };
 
-export { isEscapeKey, rememberScroll, onDocumentEscape, debounce, getRandomPosition, isImage };
+export { isEscapeKey, rememberScroll, escapeDocument, debounce, getRandomPosition, isImage };
